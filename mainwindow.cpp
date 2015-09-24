@@ -119,6 +119,7 @@ void DrawnWidget::paintEvent(QPaintEvent *evt)
 void MainWindow::on_importButton_clicked()
 {
     QFileDialog *qfd = new QFileDialog(this);
+    qfd->setAttribute(Qt::WA_DeleteOnClose);
     qfd->setWindowTitle(tr("Import File"));
     connect(qfd, &QFileDialog::filesSelected, this, &MainWindow::importAccepted);
     qfd->show();
@@ -151,6 +152,7 @@ void MainWindow::importAccepted(QStringList items)
 void MainWindow::on_exportButton_clicked()
 {
     QFileDialog *qfd = new QFileDialog(this);
+    qfd->setAttribute(Qt::WA_DeleteOnClose);
     qfd->setWindowTitle("Export File");
     connect(qfd, &QFileDialog::fileSelected, this, &MainWindow::exportAccepted);
     qfd->show();
