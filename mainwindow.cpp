@@ -121,32 +121,28 @@ void MainWindow::on_importButton_clicked()
     QFileDialog *qfd = new QFileDialog(this);
     qfd->setAttribute(Qt::WA_DeleteOnClose);
     qfd->setWindowTitle(tr("Import File"));
-    connect(qfd, &QFileDialog::filesSelected, this, &MainWindow::importAccepted);
-    qfd->show();
-}
-
-void MainWindow::importAccepted(QStringList items)
-{
-    QByteArray line;
-    ui->listWidget->clear();
-    qsl.clear();
-    // foreach file, read all its items and add to working lists
-    foreach (QString fname, items) {
-        QFile f(fname);
-        if (!f.open(QIODevice::ReadOnly | QIODevice::Text))
-            continue;
-        else {
-            QTextStream in(&f);
-            QString line;
-            while (true) {
-                line = in.readLine();
-                if (line.isNull())
-                    break;
-                ui->listWidget->addItem(QString(line));
-                qsl.append(QString(line));
+    connect(qfd, &QFileDialog::filesSelected, [this](QStringList items) {
+        this->ui->listWidget->clear();
+        this->qsl.clear();
+        // foreach file, read all its items and add to working lists
+        foreach (QString fname, items) {
+            QFile f(fname);
+            if (!f.open(QIODevice::ReadOnly | QIODevice::Text))
+                continue;
+            else {
+                QTextStream in(&f);
+                QString line;
+                while (true) {
+                    line = in.readLine();
+                    if (line.isNull())
+                        break;
+                    this->ui->listWidget->addItem(QString(line));
+                    this->qsl.append(QString(line));
+                }
             }
         }
-    }
+    });
+    qfd->show();
 }
 
 void MainWindow::on_exportButton_clicked()
@@ -154,32 +150,17 @@ void MainWindow::on_exportButton_clicked()
     QFileDialog *qfd = new QFileDialog(this);
     qfd->setAttribute(Qt::WA_DeleteOnClose);
     qfd->setWindowTitle("Export File");
-    connect(qfd, &QFileDialog::fileSelected, this, &MainWindow::exportAccepted);
-    qfd->show();
-}
-
-void MainWindow::exportAccepted(QString item)
-{
-    if (item.isEmpty())
-        return;
-
-    QFile f(item);
-    if (!f.open(QIODevice::WriteOnly | QIODevice::Text))
-        return;
-    else {
+    connect(qfd, &QFileDialog::fileSelected, [this](QString item) {
+        if (item.isEmpty())
+            return;
+        QFile f(item);
+        if (!f.open(QIODevice::WriteOnly | QIODevice::Text))
+            return;
         QTextStream out(&f);
         foreach(QString s, qsl)
             out << s << '\n';
-    }
-}
-
-void MainWindow::removeItem()
-{
-    int index = ui->listWidget->currentRow();
-    if (index < 0)
-        return;
-    ui->listWidget->takeItem(index);
-    qsl.takeAt(index);
+    });
+    qfd->show();
 }
 
 void MainWindow::on_listWidget_customContextMenuRequested(const QPoint &pos)
@@ -187,7 +168,13 @@ void MainWindow::on_listWidget_customContextMenuRequested(const QPoint &pos)
     QMenu m(this);
     QAction *a = new QAction(&m);
     a->setText("Remove");
-    connect(a, &QAction::triggered, this, &MainWindow::removeItem);
+    connect(a, &QAction::triggered, [this]() {
+        int index = this->ui->listWidget->currentRow();
+        if (index < 0)
+            return;
+        this->ui->listWidget->takeItem(index);
+        this->qsl.takeAt(index);
+    });
     qDebug() << ui->listWidget->mapToGlobal(pos);
     m.addAction(a);
     m.exec(ui->listWidget->mapToGlobal(pos));

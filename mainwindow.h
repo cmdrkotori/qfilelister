@@ -40,15 +40,9 @@ public:
 
 private slots:
     void on_listWidget_currentTextChanged(const QString &currentText);
-
     void on_importButton_clicked();
-    void importAccepted(QStringList items);
     void on_exportButton_clicked();
-    void exportAccepted(QString item);
-    void removeItem();
-
     void on_listWidget_customContextMenuRequested(const QPoint &pos);
-
     void on_actionAbout_triggered();
 
 private:
