@@ -59,6 +59,7 @@ void DrawnWidget::setPixmap(QPixmap &pm)
 
 void DrawnWidget::paintEvent(QPaintEvent *evt)
 {
+    Q_UNUSED(evt);
     QPainter painter(this);
     int pw, ph;
 
