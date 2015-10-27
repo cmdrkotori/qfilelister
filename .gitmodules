@@ -1,0 +1,3 @@
+[submodule "mimetypes"]
+	path = mimetypes
+	url = git://github.com/cmdrkotori/mimetypes.git
