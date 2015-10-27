@@ -5,6 +5,7 @@
 #include <QDragEnterEvent>
 #include <QGLWidget>
 #include <QWidget>
+#include "mimetypes/mimetypes.h"
 
 namespace Ui {
 class MainWindow;
@@ -50,6 +51,7 @@ private:
     DrawnWidget* dw;        // drawn preview widget
     QPixmap pm;             // preview pixmap
     QStringList qsl;        // working list mirror of widget data
+    MimeTypes mimeTypeDb;
 };
 
 

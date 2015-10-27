@@ -15,9 +15,11 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    mimetypes/mimetypes.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    mimetypes/mimetypes.h
 
 FORMS    += mainwindow.ui
 

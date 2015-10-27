@@ -1,8 +1,10 @@
 #include <QFileDialog>
 #include <QMimeData>
+#include <QMimeDatabase>
 #include <QFile>
 #include <QDebug>
 #include <QMessageBox>
+#include <QProcess>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -178,6 +180,32 @@ void MainWindow::on_listWidget_customContextMenuRequested(const QPoint &pos)
     });
     qDebug() << ui->listWidget->mapToGlobal(pos);
     m.addAction(a);
+
+    QMenu *openwith = m.addMenu("Open With");
+    QString file = qsl.value(this->ui->listWidget->currentRow());
+    QList<MimeTypeHandler *> apps = mimeTypeDb.appsFor(QMimeDatabase().mimeTypeForFile(file).name());
+    foreach (MimeTypeHandler *app, apps) {
+        a = new QAction(openwith);
+        a->setText(app->name);
+        connect(a, &QAction::triggered, [this, app, file]() {
+            if (file.isNull())
+                return;
+            QString cmd = app->exec;
+            if (cmd.contains(QRegExp("%[Uu]"))) {
+                QString url = QString::fromLatin1(QUrl::fromLocalFile(file).toEncoded());
+                cmd.replace(QRegExp("%[Uu]"), QString("\"%1\"").arg(url));
+            }
+            if (cmd.contains(QRegExp("%[Ff]")))
+                cmd.replace(QRegExp("%[Ff]"), QString("\"%1\"").arg(file));
+
+            QProcess *p = new QProcess();
+            p->start(cmd);
+            connect(p, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
+                    [p](int){ p->deleteLater(); });
+        });
+        openwith->addAction(a);
+    }
+
     m.exec(ui->listWidget->mapToGlobal(pos));
 }
 
