@@ -2,6 +2,8 @@
 
 A simple way to create file lists.
 
+Part of the playground series of repositories.  The playground series are helper classes/apps I wrote, mainly uploaded for posterity.
+
 ## Usage
 
 Drag and drop files into the file list area.  Preview items with the inbuilt image previewer.  Right click to remove unwanted files from the list.  When satisfied, export the list to a text file.  Import file lists for editing.
